@@ -25,15 +25,19 @@ TOKEN = None
 # IDs de galería
 EMP_GALLERY_ID = 531
 SOC_GALLERY_ID = 546
-PROV_GALLERY_ID = 548  # NUEVO: Proveedores
+PROV_GALLERY_ID = 548
 GALLERY_IDS = [EMP_GALLERY_ID, SOC_GALLERY_ID, PROV_GALLERY_ID]
 
-# CSVs por galería
+# Directorio para almacenar CSVs
+DATA_DIR = Path("data")
+DATA_DIR.mkdir(exist_ok=True) 
+
 CSV_FILES = {
-    EMP_GALLERY_ID: Path("detecciones_empleados.csv"),
-    SOC_GALLERY_ID: Path("detecciones_socios.csv"),
-    PROV_GALLERY_ID: Path("detecciones_proveedores.csv"),  # NUEVO
+    EMP_GALLERY_ID: DATA_DIR / "detecciones_empleados.csv",
+    SOC_GALLERY_ID: DATA_DIR / "detecciones_socios.csv",
+    PROV_GALLERY_ID: DATA_DIR / "detecciones_proveedores.csv",
 }
+
 
 # Caches por galería
 GALLERY_CACHE = {gid: {} for gid in GALLERY_IDS}
@@ -1093,6 +1097,8 @@ def _fetch_and_write_csv_for_gallery(gallery_id: int, total_records_needed: int 
             if new_hash == _last_fetch_hash_by.get(gallery_id):
                 return False
 
+            csv_path.parent.mkdir(parents=True, exist_ok=True)
+            
             # Escribir CSV
             with csv_path.open(mode="w", newline="", encoding="utf-8") as f:
                 writer = csv.writer(f)
